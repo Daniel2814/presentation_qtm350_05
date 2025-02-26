@@ -1,0 +1,204 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"05 assignment creating wdi quarto\"\n",
+        "author: \"Daniel Nickas\"\n",
+        "format:\n",
+        "  html: default\n",
+        "  pdf: default\n",
+        "editor:\n",
+        "  render-on-save: true\n",
+        "---"
+      ],
+      "id": "cb66a50b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "!python3 -m pip install jupyter matplotlib plotly"
+      ],
+      "id": "c432b29f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Tasks\n",
+        "\n",
+        "1. Please initialise a new `.qmd` file with an appropriate `YAML` header. Include metadata such as `title`, `author`, `date`, and specify the output format as `HTML` and `PDF`.\n",
+        "\n",
+        "   \n",
+        "2. Load the dataset using your preferred programming language (R or Python). \n"
+      ],
+      "id": "02414f2e"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "import matplotlib.pyplot as plt\n",
+        "import seaborn as sns\n",
+        "data = pd.read_csv(\"assignments/wdi.csv\")\n",
+        "data.head()"
+      ],
+      "id": "6cd8bdfc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "3. Conduct exploratory data analysis on at least three indicators of your choice. Summarise your findings in markdown sections. Show your code and results.\n"
+      ],
+      "id": "aa69d59f"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "df = wdi[['country', 'education_expenditure_gdp_share', 'gdp_per_capita', 'unemployment_rate']]\n",
+        "df.info()\n",
+        "print(df.isnull().sum())"
+      ],
+      "id": "6cad490b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "df[['education_expenditure_gdp_share', 'gdp_per_capita', 'unemployment_rate']].describe()"
+      ],
+      "id": "a0a93b47",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import matplotlib.pyplot as plt\n",
+        "import seaborn as sns\n",
+        "\n",
+        "\n",
+        "cols = ['education_expenditure_gdp_share', 'gdp_per_capita', 'unemployment_rate']\n",
+        "\n",
+        "for col in cols:\n",
+        "    plt.figure(figsize=(8, 4))\n",
+        "    sns.histplot(df[col], kde=True)\n",
+        "    plt.title(f'Distribution of {col}')\n",
+        "    plt.xlabel(col)\n",
+        "    plt.ylabel('Frequency')\n",
+        "    plt.show()"
+      ],
+      "id": "c2a6363c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "top_gdp_per_capita = data[['country', 'gdp_per_capita']].sort_values(by='gdp_per_capita', ascending=False).head(5)\n",
+        "top_unemployment_rate = data[['country', 'unemployment_rate']].sort_values(by='unemployment_rate', ascending=False).head(5)\n",
+        "top_health_expenditure = data[['country', 'health_expenditure_gdp_share']].sort_values(by='health_expenditure_gdp_share', ascending=False).head(5)"
+      ],
+      "id": "ca55144b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#Showing the top five countries in each category\n",
+        "top_gdp_per_capita, top_unemployment_rate, top_health_expenditure"
+      ],
+      "id": "5aee8f48",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Correlation Matrix\n",
+        "\n",
+        "The correlation matrix provides a clearer view of the relationships between variables:\n",
+        "\n",
+        "GDP per Capita and Education Expenditure (as % of GDP): A weak correlation suggest the absence of a strong relationship of -.086, which is interesting considering that the richest countries often have outstanding education. Lots of money is spent on education, but one can infer  that it only uses a small fraction of those large countries' GDP. \n",
+        "\n",
+        "GDP per Capita and Unemployment Rate: A negative correlation indicates that as GDP per capita increases, the unemployment rate tends to decrease, though the strength of this relationship should raise some caution. There are many other factors that influence unemployment rates that coincide with GDP per capita's trends. GDP per capita is not necessarily related to the number of people working, but often times what industries are generating large sums of money. This requires careful considering human capital and physical capital, though it is an interesting visualization. \n",
+        "\n",
+        "\n",
+        "Education Expenditure and Unemployment Rate: This correlation will help determine if countries that invest more in education tend to have lower or higher unemployment rates.\n",
+        "\n",
+        "\n",
+        "4. Create at least two different types of plots (e.g., bar chart, scatter plot) to represent your analysis. Use Quarto code chunks to embed these visualisations. Add a title and axis labels to each plot. Use Quarto to include a caption and a reference to the source of the data. Hide your code in the final document.\n"
+      ],
+      "id": "4bf6480d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| echo: false\n",
+        "#| fig-cap: Correlation Matrix of Education Expenditure of GDP Share, GDP Per Capita, and Unemployment Rate\n",
+        "#| label: Correl-matrix\n",
+        "corr_matrix = df[['education_expenditure_gdp_share', 'gdp_per_capita', 'unemployment_rate']].corr()\n",
+        "\n",
+        "plt.figure(figsize=(6, 4))\n",
+        "sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')\n",
+        "plt.title('Correlation Matrix')\n",
+        "plt.show()"
+      ],
+      "id": "Correl-matrix",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "5. Construct a table that highlights some key statistics from your analysis. Ensure the table is well-formatted and included in the report.\n",
+        "   \n",
+        "6. Include cross-references to your figures and tables within the text. Demonstrate proper labeling and referencing techniques.\n",
+        "   \n",
+        "7. Add a bibliography using BibTeX (`.bib`). Cite at least two sources related to your analysis.\n",
+        "   \n",
+        "8.  Create a new `.qmd` file configured for `revealjs` output. Include a title slide, a few content slides, and a concluding slide. \n",
+        "   \n",
+        "9.  Incorporate your analysis and visualisations from the report into the presentation.\n",
+        "    \n",
+        "10. Customise the presentation theme and incorporate at least one transition effect between slides.\n",
+        "    \n",
+        "11. Render your report and presentation to HTML, PDF, and Revealjs (HTML) formats. \n",
+        "    \n",
+        "12. Use Git to manage your project and create a repository on GitHub. Submit the link to your repository on Canvas.\n",
+        "    \n",
+        "13. Set up GitHub Pages (preferably) or use GitHack to host your HTML report and presentation. Add the links of the published pages to your `README.md` file. Do not forget to include the PDF report and the `.qmd` files in your repository.\n"
+      ],
+      "id": "1f223fe2"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/Users/danielnickas/Library/Python/3.9/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
